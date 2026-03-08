@@ -1,8 +1,19 @@
 1. What is the difference between var, let, and const?
+
 Variables declared with var are function-scoped, meaning they are available throughout the function they are declared in, even outside of blocks like if statements or loops. var variables can be redeclared and updated. They are also hoisted, which means they are moved to the top of their scope during compilation, but they are initialized with undefined, so you can access them before declaration without getting an error.let variables are hoisted but not initialized, so accessing them before declaration results in a ReferenceError.const is also block-scoped and was introduced in ES6. The main difference is that const variables cannot be updated or redeclared after initialization. They must be assigned a value when declared.
+
 2. What is the spread operator (...)?
+
 The spread operator is represented by three dots (...) and is used to expand or spread elements from an iterable (like an array, object, or string) into individual elements. It was introduced in ES6 and makes many operations much simpler and more readable.
+
 3. What is the difference between map(), filter(), and forEach()?
+
 map() is used when you want to transform every element in an array and create a new array of the same length. It takes a callback function that returns the transformed value for each element. The original array remains unchanged.filter() is used when you want to select a subset of elements from an array based on a condition. It creates a new array containing only the elements that pass the test implemented by the callback function. The original array remains unchanged.forEach() is used when you want to execute a function for each element in an array, usually for side effects like logging, updating external variables, or manipulating the DOM.
+
 4. What is an arrow function?
+
 Arrow functions are a shorter syntax for writing function expressions, introduced in ES6. They provide a more concise way to write functions and have some important behavioral differences from traditional functions.
+
+5. What are template literals?
+
+Template literals are a way to work with strings that was introduced in ES6. They are enclosed by backticks ` instead of quotes ' or ", and they provide several powerful features that make string manipulation much easier.
