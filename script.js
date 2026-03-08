@@ -167,7 +167,6 @@ window.openIssueModal = function(issueId) {
                                 <i class="fa-regular fa-circle-xmark text-xl"></i>
                             </button>
                         </div>
-                        
                         <div class="flex flex-wrap items-center text-xs sm:text-sm text-gray-600 gap-2 bg-gray-50 p-3 rounded-lg">
                             <span class="font-medium bg-gradient-to-r from-green-500 to-green-600 rounded-full text-white px-3 py-1 shadow-md">Opened</span>
                             <span class="mx-1">•</span>
@@ -175,7 +174,6 @@ window.openIssueModal = function(issueId) {
                             <span class="mx-1">•</span>
                             <span><i class="fa-regular fa-calendar mr-1"></i>${formattedDate}</span>
                         </div>
-                        
                         <div class="flex flex-wrap gap-3">
                             ${issue.labels.map(label => {
                                 const labelLower = label.toLowerCase();
@@ -188,11 +186,8 @@ window.openIssueModal = function(issueId) {
                                 }
                             }).join('')}
                         </div>
-                        
                         <p class="text-sm sm:text-base text-gray-700 bg-gray-50 p-4 rounded-lg">${issue.description}</p>
-                        
                         <hr class="border-gray-200">
-                        
                         <div class="grid grid-cols-2 gap-4">
                             <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg">
                                 <p class="text-sm font-medium text-gray-500 mb-1 flex items-center gap-2">
@@ -254,34 +249,28 @@ searchButton.addEventListener('click', () => {
             showLoading(false);
         });
 });
-
 searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         searchButton.click();
     }
 });
-
 tabAll.addEventListener('click', () => {
     currentTab = 'all';
     filterIssuesByTab();
 });
-
 tabOpen.addEventListener('click', () => {
     currentTab = 'open';
     filterIssuesByTab();
 });
-
 tabClosed.addEventListener('click', () => {
     currentTab = 'closed';
     filterIssuesByTab();
 });
-
 function updateActiveTab() {
     [tabAll, tabOpen, tabClosed].forEach(tab => {
         tab.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-purple-600', 'text-white', 'border-blue-600', 'shadow-md');
         tab.classList.add('bg-transparent', 'text-gray-500', 'border-transparent');
     });
-
     if (currentTab === 'all') {
         tabAll.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-purple-600', 'text-white', 'border-blue-600', 'shadow-md');
         tabAll.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
@@ -293,7 +282,6 @@ function updateActiveTab() {
         tabClosed.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
     }
 }
-
 function showLoading(show) {
     if (show) {
         loadingSpinner.classList.remove('hidden');
@@ -303,7 +291,6 @@ function showLoading(show) {
         issuesGrid.classList.remove('hidden');
     }
 }
-
 window.onclick = function(event) {
     if (event.target.classList.contains('modal-overlay')) {
         closeModal();
