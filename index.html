@@ -1,12 +1,168 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GitHub Issues Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/88207c0f65.js" crossorigin="anonymous"></script>
+    <style>
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .card-open {
+            border-top: 4px solid #10b981;
+        }
+
+        .card-closed {
+            border-top: 4px solid #8b5cf6;
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            -webkit-line-clamp: 2;
+        }
+
+        @media (max-width: 640px) {
+            .line-clamp-2 {
+                -webkit-line-clamp: 3;
+            }
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .shimmer-bg {
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        .gradient-border {
+            position: relative;
+            border: double 1px transparent;
+            background-image: linear-gradient(white, white),
+                linear-gradient(to right, #3b82f6, #8b5cf6);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-shine {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            transform: rotate(30deg);
+            transition: transform 0.5s ease;
+            pointer-events: none;
+        }
+
+        .card-shine:hover::after {
+            transform: rotate(30deg) translate(50%, 50%);
+        }
+
+        .badge-glow {
+            box-shadow: 0 0 15px currentColor;
+        }
+    </style>
 </head>
+
 <body class="bg-gradient-to-br from-gray-50 to-gray-100">
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <div
@@ -92,6 +248,113 @@
             </form>
         </div>
     </div>
+
+    <div id="mainPage" class="hidden min-h-screen bg-gray-50 relative">
+        <div class="fixed inset-0 overflow-hidden pointer-events-none">
+            <div
+                class="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10">
+            </div>
+            <div
+                class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-10">
+            </div>
+        </div>
+        <nav class="glass-effect sticky top-0 z-10 border-b border-gray-200 shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col sm:flex-row justify-between items-center h-auto sm:h-16 py-4 sm:py-0 gap-4">
+                    <div class="flex items-center w-full sm:w-auto group">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3 transform group-hover:rotate-12 transition-transform duration-300">
+                            <i class="fa-brands fa-github text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-lg sm:text-xl font-bold">
+                            <span class="text-gradient">GitHub Issues Tracker</span>
+                        </h1>
+                    </div>
+                    <div class="flex items-center space-x-2 w-full sm:w-auto">
+                        <div class="relative flex-1 sm:flex-initial group">
+                            <i
+                                class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-gray-400 group-focus-within:text-blue-500 transition-colors"></i>
+                            <input type="text" id="searchInput" placeholder="Search issues..."
+                                class="w-full sm:w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition shadow-sm hover:shadow-md">
+                        </div>
+                        <button id="searchButton"
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg transition shadow-md hover:shadow-xl whitespace-nowrap">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+            <div class="border-b border-gray-200 mb-6 overflow-x-auto">
+                <nav class="flex space-x-4 sm:space-x-8 min-w-max sm:min-w-0 pb-2">
+                    <button id="tabAll"
+                        class="tab-button py-2 px-3 sm:px-4 border-b-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl text-white border-blue-600 font-medium text-xs sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap shadow-md hover:shadow-xl transition-all">
+                        <i class="fa-solid fa-layer-group"></i>
+                        All
+                    </button>
+                    <button id="tabOpen"
+                        class="tab-button py-2 px-3 sm:px-4 border-b-2 rounded-xl bg-transparent text-gray-500 border-transparent hover:text-gray-700 font-medium text-xs sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all hover:scale-105">
+                        <i class="fa-solid fa-circle-check text-green-500"></i>
+                        Open
+                    </button>
+                    <button id="tabClosed"
+                        class="tab-button py-2 px-3 sm:px-4 border-b-2 rounded-xl bg-transparent text-gray-500 border-transparent hover:text-gray-700 font-medium text-xs sm:text-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap transition-all hover:scale-105">
+                        <i class="fa-solid fa-circle-xmark text-purple-500"></i>
+                        Closed
+                    </button>
+                </nav>
+            </div>
+
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg float-animation">
+                        <img src="assets/Aperture.png" alt="Aperture" class="w-6 h-6 sm:w-8 sm:h-8">
+                    </div>
+                    <div>
+                        <h2 id="issueCount" class="text-xl sm:text-2xl font-bold">
+                            <span class="text-gradient">0 Issues</span>
+                        </h2>
+                        <p class="text-xs sm:text-sm text-gray-500 flex items-center gap-1">
+                            <i class="fa-solid fa-chart-line"></i>
+                            Track and manage your project issues
+                        </p>
+                    </div>
+                </div>
+                <div
+                    class="flex items-center space-x-4 bg-white/70 backdrop-blur-sm px-4 py-2 rounded-lg shadow-md border border-gray-200">
+                    <span class="flex items-center font-bold text-xs sm:text-sm">
+                        <i class="fa-solid fa-circle text-green-500 mr-1 sm:mr-2 text-xs sm:text-sm animate-pulse"></i>
+                        Open: <span id="openCount" class="font-semibold ml-1">0</span>
+                    </span>
+                    <span class="flex items-center font-bold text-xs sm:text-sm">
+                        <i class="fa-solid fa-circle text-purple-500 mr-1 sm:mr-2 text-xs sm:text-sm animate-pulse"></i>
+                        Closed: <span id="closedCount" class="font-semibold ml-1">0</span>
+                    </span>
+                </div>
+            </div>
+
+            <div id="loadingSpinner" class="flex justify-center items-center py-20 hidden">
+                <div class="spinner"></div>
+            </div>
+
+            <div id="issuesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 sm:gap-6">
+            </div>
+        </main>
+    </div>
+
+    <div id="issueModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 modal-overlay transition-opacity" onclick="closeModal()"></div>
+            <div
+                class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-4 sm:p-6 relative z-10 mx-4 transform transition-all scale-95 hover:scale-100 duration-300">
+                <div id="modalContent" class="space-y-4"></div>
+            </div>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
+
 </html>
