@@ -19,6 +19,17 @@ const tabClosed = document.getElementById('tabClosed');
 const issueModal = document.getElementById('issueModal');
 const modalContent = document.getElementById('modalContent');
 
+// Show/Hide Loading Spinner
+function showLoading(show) {
+    if (show) {
+        loadingSpinner.classList.remove('hidden');
+        issuesGrid.classList.add('hidden');
+    } else {
+        loadingSpinner.classList.add('hidden');
+        issuesGrid.classList.remove('hidden');
+    }
+}
+
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const username = document.getElementById('username').value;
@@ -27,17 +38,30 @@ loginForm.addEventListener('submit', (e) => {
     if (username === 'admin' && password === 'admin123') {
         loginPage.classList.add('hidden');
         mainPage.classList.remove('hidden');
+        
+        // Show spinner when starting to load data
+        showLoading(true);
+        
         fetch(`${API_BASE}/issues`)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.status === 'success') {
                     allIssues = data.data;
                     filterIssuesByTab();
+                } else {
+                    throw new Error('API returned unsuccessful status');
                 }
             })
             .catch(error => {
                 console.error('Error fetching issues:', error);
                 alert('Failed to fetch issues. Please try again.');
+                // Hide spinner even on error
+                showLoading(false);
             });
     } else {
         alert('Invalid credentials! Use admin/admin123');
@@ -45,6 +69,9 @@ loginForm.addEventListener('submit', (e) => {
 });
 
 function filterIssuesByTab() {
+    // Show spinner when filtering/loading data
+    showLoading(true);
+    
     if (currentTab === 'all') {
         filteredIssues = allIssues;
     } else if (currentTab === 'open') {
@@ -56,6 +83,9 @@ function filterIssuesByTab() {
     updateCounts();
     renderIssues(filteredIssues);
     updateActiveTab();
+    
+    // Hide spinner after rendering
+    showLoading(false);
 }
 
 function updateCounts() {
@@ -143,7 +173,9 @@ function renderIssues(issues) {
 }
 
 window.openIssueModal = function(issueId) {
+    // Show spinner when loading modal data
     showLoading(true);
+    
     fetch(`${API_BASE}/issue/${issueId}`)
         .then(response => response.json())
         .then(data => {
@@ -167,6 +199,7 @@ window.openIssueModal = function(issueId) {
                                 <i class="fa-regular fa-circle-xmark text-xl"></i>
                             </button>
                         </div>
+                        
                         <div class="flex flex-wrap items-center text-xs sm:text-sm text-gray-600 gap-2 bg-gray-50 p-3 rounded-lg">
                             <span class="font-medium bg-gradient-to-r from-green-500 to-green-600 rounded-full text-white px-3 py-1 shadow-md">Opened</span>
                             <span class="mx-1">•</span>
@@ -174,6 +207,7 @@ window.openIssueModal = function(issueId) {
                             <span class="mx-1">•</span>
                             <span><i class="fa-regular fa-calendar mr-1"></i>${formattedDate}</span>
                         </div>
+                        
                         <div class="flex flex-wrap gap-3">
                             ${issue.labels.map(label => {
                                 const labelLower = label.toLowerCase();
@@ -186,8 +220,11 @@ window.openIssueModal = function(issueId) {
                                 }
                             }).join('')}
                         </div>
+                        
                         <p class="text-sm sm:text-base text-gray-700 bg-gray-50 p-4 rounded-lg">${issue.description}</p>
+                        
                         <hr class="border-gray-200">
+                        
                         <div class="grid grid-cols-2 gap-4">
                             <div class="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg">
                                 <p class="text-sm font-medium text-gray-500 mb-1 flex items-center gap-2">
@@ -208,11 +245,13 @@ window.openIssueModal = function(issueId) {
                 `;
                 issueModal.classList.remove('hidden');
             }
+            // Hide spinner after modal content is loaded
             showLoading(false);
         })
         .catch(error => {
             console.error('Error fetching issue details:', error);
             alert('Failed to fetch issue details.');
+            // Hide spinner even on error
             showLoading(false);
         });
 };
@@ -229,7 +268,9 @@ searchButton.addEventListener('click', () => {
         return;
     }
 
+    // Show spinner during search
     showLoading(true);
+    
     fetch(`${API_BASE}/issues/search?q=${encodeURIComponent(searchTerm)}`)
         .then(response => response.json())
         .then(data => {
@@ -249,28 +290,34 @@ searchButton.addEventListener('click', () => {
             showLoading(false);
         });
 });
+
 searchInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         searchButton.click();
     }
 });
+
 tabAll.addEventListener('click', () => {
     currentTab = 'all';
     filterIssuesByTab();
 });
+
 tabOpen.addEventListener('click', () => {
     currentTab = 'open';
     filterIssuesByTab();
 });
+
 tabClosed.addEventListener('click', () => {
     currentTab = 'closed';
     filterIssuesByTab();
 });
+
 function updateActiveTab() {
     [tabAll, tabOpen, tabClosed].forEach(tab => {
         tab.classList.remove('bg-gradient-to-r', 'from-blue-600', 'to-purple-600', 'text-white', 'border-blue-600', 'shadow-md');
         tab.classList.add('bg-transparent', 'text-gray-500', 'border-transparent');
     });
+
     if (currentTab === 'all') {
         tabAll.classList.add('bg-gradient-to-r', 'from-blue-600', 'to-purple-600', 'text-white', 'border-blue-600', 'shadow-md');
         tabAll.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
@@ -282,15 +329,7 @@ function updateActiveTab() {
         tabClosed.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
     }
 }
-function showLoading(show) {
-    if (show) {
-        loadingSpinner.classList.remove('hidden');
-        issuesGrid.classList.add('hidden');
-    } else {
-        loadingSpinner.classList.add('hidden');
-        issuesGrid.classList.remove('hidden');
-    }
-}
+
 window.onclick = function(event) {
     if (event.target.classList.contains('modal-overlay')) {
         closeModal();
